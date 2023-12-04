@@ -233,12 +233,12 @@ study_words_pureread = JSON.parse(study_words_pureread);
 //  Randomly Assign one of the three between-subjects conditions: mixed-list, pure-produce, or pure-read  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var condition_assignment = jsPsych.randomization.sampleWithoutReplacement(['pureread', 'pureproduce', 'mixed'], 1)[0];
+/*var condition_assignment = jsPsych.randomization.sampleWithoutReplacement(['pureread', 'pureproduce', 'mixed'], 1)[0];
 jsPsych.data.addProperties({
   condition: condition_assignment
-});
+}); */
 
-console.log(condition_assignment);
+//console.log(condition_assignment);
 
 //trial information for each condition -  will call a different list depending on condition
 var list_1 = study_words_pureproduce;
@@ -372,6 +372,8 @@ async function getAvailableCondition() {
     return null;
   }
 };
+
+console.log(condition);
 
 //set a random subject number
 var subject_id = jsPsych.randomization.randomID(15);
