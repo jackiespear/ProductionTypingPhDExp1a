@@ -364,7 +364,7 @@ async function getAvailableCondition() {
   if (!conditionCountsFull) {
     //if any condition is not full, return a random available condition
     const availableConditions = ['pureread', 'pureproduce', 'mixed'].filter(
-      condition => conditionCounts[condition] < 30 //for 30 subjects per condition
+      condition => conditionCounts[condition] < 2 //for 30 subjects per condition, set to 2 for testing
     );
     return jsPsych.randomization.sampleWithoutReplacement(availableConditions, 1)[0];
   } else {
