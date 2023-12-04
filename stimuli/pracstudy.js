@@ -1,4 +1,4 @@
-studywords_practice = [
+pracstudy = [
     {"stimulus":"<p style='font-size: 48px;'>BRICK - <span style='color: green'>TRICK</span></p>","data":{"type":"old","category":"produce","word":"TRICK"}},
     {"stimulus":"<p style='font-size: 48px;'>WRITE - <span style='color: green'>FRIGHT</span></p>","data":{"type":"old","category":"produce","word":"FRIGHT"}},
     {"stimulus":"<p style='font-size: 48px;'>SHOULDER - <span style='color: green'>BOULDER</span></p>","data":{"type":"old","category":"produce","word":"BOULDER"}},
