@@ -326,6 +326,82 @@ firebase.initializeApp(firebaseConfig);
   // ...
 });
 
+//// **** this is new, trying to automatically fill conditions to have equal N's ****/////////    ///////////////////$$$$$$$$$$$$$$$$$$$$$$$$$
+
+async function checkConditionNumbers() {
+  //reference the root of the realtime database
+  const rootRef = firebase.database().ref();
+
+  //get a snapshot of the data
+  const snapshot = await rootRef.once('value');
+
+  //initalize condition counts
+  const conditionCounts = {
+    pureread: 0,
+    pureproduce: 0,
+    mixed: 0,
+  };
+
+  //loop through data to count N's in each condition
+  snapshot.forEach(childSnapshot => {
+    const condition = childSnapshot.val().condition; 
+    if (condition) {
+      conditionCounts[condition]++;
+    }
+  });
+
+  //checking to see if any condition has reached desired N. e.g. 30 s's per condition
+  return (
+    conditionCounts.pureread >= 30 ||
+    conditionCounts.pureproduce >= 30 ||
+    conditionCounts.mixed >= 30
+  );
+}
+
+//function to get available conditions
+async function getAvailableCondition() {
+  const conditionCountsFull = await checkConditionCounts();
+  if (!conditionCountsFull) {
+    //if any condition is not full, return a random available condition
+    const availableConditions = ['pureread', 'pureproduce', 'mixed'].filter(
+      condition => conditionCounts[condition] < 30 //for 30 subjects per condition
+    );
+    return jsPsych.randomization.sampleWithoutReplacement(availableConditions, 1)[0];
+  } else {
+    //if all conditions are full, return null 
+    return null;
+  }
+};
+
+//set a random subject number
+var subject_id = jsPsych.randomization.randomID(15);
+
+//function to start the experiment 
+function startExperiment(subject_id) {
+  getAvailableCondition().then(availableConditions => {
+    if (availableConditions) {
+      //assign condition
+      const condition_assignment = availableConditions;
+      jsPsych.data.addProperties({
+        condition: condition_assignment
+      });
+
+      //store condition in realtime database on Firebaes
+      firebase
+      .database()
+      .ref(subject_id)
+      .set({
+        condition: condition_assignment
+      });
+      
+      }else {
+        console.log('all conditions are full');
+      }
+  });
+}
+
+startExperiment(subject_id);
+
   /////////////////////////////////////////////////////////////////
   
 
@@ -361,7 +437,7 @@ firebase.initializeApp(firebaseConfig);
 
 /* experiment parameters */
 // generate a random subject ID with 15 characters
-var subject_id = jsPsych.randomization.randomID(15);
+//var subject_id = jsPsych.randomization.randomID(15);  //moved
 
 // get the id number for the SONA participant so that we can grant credits automatically
 var SONA_ID = getUrlParam('id','Empty');
@@ -516,7 +592,6 @@ var practice_study_procedure = {
 };
 
 var prac_test_phase = {
-
 type: 'html-keyboard-response',
 stimulus: jsPsych.timelineVariable('stimulus'),
 choices: ['y', 'n'],
