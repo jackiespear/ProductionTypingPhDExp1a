@@ -360,7 +360,7 @@ async function checkConditionNumbers() {
 
 //function to get available conditions
 async function getAvailableCondition() {
-  const conditionCountsFull = await checkConditionCounts();
+  const conditionCountsFull = await checkConditionNumbers();
   if (!conditionCountsFull) {
     //if any condition is not full, return a random available condition
     const availableConditions = ['pureread', 'pureproduce', 'mixed'].filter(
