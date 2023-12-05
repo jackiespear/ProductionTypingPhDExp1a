@@ -328,7 +328,7 @@ firebase.initializeApp(firebaseConfig);
 
 //// **** this is new, trying to automatically fill conditions to have equal N's ****/////////    ///////////////////$$$$$$$$$$$$$$$$$$$$$$$$$
 
-async function checkConditionNumbers() {
+/* async function checkConditionNumbers() {
   //reference the root of the realtime database
   const rootRef = firebase.database().ref();
 
@@ -373,7 +373,85 @@ async function getAvailableCondition() {
   }
 };
 
-console.log(condition);
+console.log(condition); */
+
+
+// Set a random subject number
+var subject_id = jsPsych.randomization.randomID(15);
+
+// Function to check condition quotas
+async function checkConditionNumbers() {
+  // Reference the root of the Realtime Database
+  const rootRef = firebase.database().ref();
+
+  // Get a snapshot of the data
+  const snapshot = await rootRef.once('value');
+
+  // Initialize condition counts
+  const conditionCounts = {
+    pureread: 0,
+    pureproduce: 0,
+    mixed: 0,
+  };
+
+  // Loop through data to count N's in each condition
+  snapshot.forEach(childSnapshot => {
+    const condition = childSnapshot.val().condition;
+    if (condition) {
+      conditionCounts[condition]++;
+    }
+  });
+
+  // Checking to see if any condition has reached the desired N (e.g., 30 participants per condition)
+  return (
+    conditionCounts.pureread >= 30 ||
+    conditionCounts.pureproduce >= 30 ||
+    conditionCounts.mixed >= 30
+  );
+}
+
+// Function to get an available condition
+async function getAvailableCondition() {
+  const conditionCountsFull = await checkConditionNumbers();
+  if (!conditionCountsFull) {
+    // If any condition is not full, return a random available condition
+    const availableConditions = ['pureread', 'pureproduce', 'mixed'].filter(
+      condition => conditionCounts[condition] < 2 // Set to 2 for testing (30 subjects per condition)
+    );
+    return jsPsych.randomization.sampleWithoutReplacement(availableConditions, 1)[0];
+  } else {
+    // If all conditions are full, return null
+    return null;
+  }
+}
+
+// Function to start the experiment
+async function startExperiment(subject_id) {
+  const condition_assignment = await getAvailableCondition();
+
+  if (condition_assignment) {
+    // Assign condition
+    jsPsych.data.addProperties({
+      condition: condition_assignment,
+    });
+
+    // Store condition in Realtime Database on Firebase
+    await firebase.database().ref(subject_id).set({
+      condition: condition_assignment,
+    });
+
+    console.log(condition_assignment);
+  } else {
+    console.log('All conditions are full');
+  }
+}
+
+// Call the function to start the experiment with the generated subject_id
+startExperiment(subject_id);
+
+console.log(condition_assignment);
+
+
 
 //set a random subject number
 var subject_id = jsPsych.randomization.randomID(15);
