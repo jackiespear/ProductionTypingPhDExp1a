@@ -427,6 +427,12 @@ async function getAvailableCondition() {
 
 // Function to start the experiment
 async function startExperiment(subject_id) {
+  const conditionCounts = {
+    pureread: 0,
+    pureproduce: 0,
+    mixed: 0,
+  };
+
   const condition_assignment = await getAvailableCondition();
 
   if (condition_assignment) {
@@ -444,43 +450,11 @@ async function startExperiment(subject_id) {
   } else {
     console.log('All conditions are full');
   }
-}
+};
 
 // Call the function to start the experiment with the generated subject_id
 startExperiment(subject_id);
 
-console.log(condition_assignment);
-
-
-
-//set a random subject number
-var subject_id = jsPsych.randomization.randomID(15);
-
-//function to start the experiment 
-function startExperiment(subject_id) {
-  getAvailableCondition().then(availableConditions => {
-    if (availableConditions) {
-      //assign condition
-      const condition_assignment = availableConditions;
-      jsPsych.data.addProperties({
-        condition: condition_assignment
-      });
-
-      //store condition in realtime database on Firebaes
-      firebase
-      .database()
-      .ref(subject_id)
-      .set({
-        condition: condition_assignment
-      });
-      
-      }else {
-        console.log('all conditions are full');
-      }
-  });
-}
-
-startExperiment(subject_id);
 
   /////////////////////////////////////////////////////////////////
   
