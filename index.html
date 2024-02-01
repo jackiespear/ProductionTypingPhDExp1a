@@ -789,26 +789,22 @@ var no_consent = {
 
 /*set up experiment structure*/
 var timeline = [];
-//timeline.push(consent);
-//timeline.push(no_consent);
-//timeline.push(welcome);
-//timeline.push(enter_full_screen);
+timeline.push(consent);
+timeline.push(no_consent);
+timeline.push(welcome);
+timeline.push(enter_full_screen);
 timeline.push(instructions);
-//timeline.push(study_procedure_practice);
 timeline.push(practice_test_instructions_pre);
 timeline.push(practice_study_procedure);
 timeline.push(practice_test_instructions);
 timeline.push(practice_test_procedure);
 timeline.push(practice_test_instructions_post);
-
-
-
 timeline.push(study_procedure); // this is new
 timeline.push(test_instructions);
 timeline.push(test_phase);
 timeline.push(survey);
 timeline.push(exit_full_screen);
-//timeline.push(debrief);
+timeline.push(debrief);
 
 /*start experiment*/
 jsPsych.init({
